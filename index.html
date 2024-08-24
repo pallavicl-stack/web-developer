@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Boxes</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .box-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .box {
+            width: 300px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            position: relative;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 19px;
+            overflow: hidden;
+        }
+
+        .box.highlighted {
+            border-color: rgb(237 9 75 / 66%);
+        }
+
+        .box:not(.expanded)::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 27%;
+            height: 100%;
+            background-color: rgba(237, 9, 75, 0.66);
+            color: white !important
+        }
+
+        .box:not(.expanded) h4::before {
+            content: "";
+            margin-left: 84px;
+        }
+
+        .box:not(.expanded) .box-header {
+            margin-left: 85px;
+        }
+
+        .box-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .radio-input {
+            transform: scale(1.2);
+            opacity: 0.7;
+            cursor: pointer;
+            accent-color: rgb(237 9 75 / 66%);
+        }
+
+        .pair-text {
+            font-weight: bold;
+        }
+
+        .discount-text {
+            position: absolute;
+            right: 149px;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+            background-color: rgba(237, 9, 75, 0.66);
+            padding: 2px;
+            display: none;
+        }
+
+        .box.expanded .discount-text {
+            display: block;
+            right: 149px;
+            top: 18px;
+            color: white;
+            background-color: rgba(237, 9, 75, 0.66);
+            padding: 4px;
+            font-size: 12px;
+        }
+
+        .box:not(.expanded) .discount-text {
+            display: block;
+            left: 25px;
+            top: 18px;
+            color: white;
+            background-color: transparent;
+            padding: 4px;
+            font-size: 16px;
+            width: 10px;
+        }
+
+
+        .box-content {
+            display: none;
+            margin-top: 10px;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            margin-left: 27px;
+        }
+
+        .box.expanded .box-content,
+        .box:hover .box-content {
+            display: flex;
+        }
+
+        h4 {
+            margin: 1px;
+            margin-left: 27px;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .dropdown-label {
+            margin-bottom: 5px;
+        }
+
+        .dropdown-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        select {
+            width: 100%;
+            flex: 1;
+        }
+
+        .text {
+            color: rgb(237 9 75 / 66%);
+        }
+
+        .shipping-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 300px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .text-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .text {
+            margin: 24px;
+            font-weight: bold;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: rgb(237 9 75 / 66%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: rgb(237 9 75 / 66%);
+        }
+
+        .cart-header {
+            display: flex;
+            align-items: center;
+            gap: 73px;
+            margin: 4px;
+            margin-bottom: 18px;
+            margin-top: 21px;
+            width: 100%;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        .save-bundle {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
+            font-size: 19px;
+        }
+
+        .save-bundle::before,
+        .save-bundle::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid rgb(237 9 75 / 66%);
+            margin: 0 10px;
+        }
+
+        .line-text {
+            font-weight: bold;
+            font-size: 20px;
+            text-align: center;
+            height: 100%;
+            font-weight: bold;
+        }
+
+        .total {
+            margin-left: -4px;
+        }
+
+        .droptext {
+            font-size: 10px;
+            position: relative;
+            top: 27px;
+        }
+
+        .droptext2 {
+            font-size: 10px;
+            position: relative;
+            top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="box-container">
+            <p class="text line-text">YAY! It's BOGO</p>
+            <div class="box" id="box1">
+                <div class="box-header">
+                    <input type="radio" name="box-option" class="radio-input">
+                    <div class="pair-text">Buy 1 Get 2</div>
+
+                </div>
+                <h4>$18.00 USD</h4>
+                <div class="discount-text">30% Off</div>
+                <div class="box-content">
+                    <div class="dropdown-row">
+                        <div class="droptext">#1</div>
+
+                        <div>
+                            <div class="dropdown-label">Size</div>
+                            <select>
+                                <option>S</option>
+                                <option>M</option>
+                                <option>L</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="dropdown-label">Color</div>
+                            <select>
+                                <option>Black</option>
+                                <option>Blue</option>
+                                <option>Green</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="dropdown-row">
+                        <div class="droptext2">#2</div>
+
+                        <div>
+                            <select>
+                                <option>S</option>
+                                <option>M</option>
+                                <option>L</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select>
+                                <option disabled selected>Color</option>
+
+                                <option>Black</option>
+                                <option>Blue</option>
+                                <option>Green</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box" id="box2">
+                <div class="box-header">
+                    <input type="radio" name="box-option" class="radio-input">
+                    <div class="pair-text">Buy 2 Get 4</div>
+
+                </div>
+                <h4>$24.00 USD</h4>
+                <div class="discount-text">30% Off</div>
+                <div class="box-content">
+                    <div class="dropdown-row">
+                        <div class="droptext">#1</div>
+                        <div>
+                            <div class="dropdown-label">Size</div>
+                            <select>
+                                <option>S</option>
+                                <option>M</option>
+                                <option>L</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="dropdown-label">Color</div>
+                            <select>
+                                <option>Black</option>
+                                <option>Blue</option>
+                                <option>Green</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="dropdown-row">
+                        <div class="droptext2">#2</div>
+                        <div>
+                            <select>
+                                <option>S</option>
+                                <option>M</option>
+                                <option>L</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select>
+                                <option disabled selected>Color</option>
+
+                                <option>Black</option>
+                                <option>Blue</option>
+                                <option>Green</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box" id="box3">
+                <div class="box-header">
+                    <input type="radio" name="box-option" class="radio-input">
+                    <div class="pair-text">Buy 3 Get 6</div>
+
+                </div>
+                <h4>$24.00 USD</h4>
+                <div class="discount-text">10% Off</div>
+                <div class="box-content">
+                    <div class="dropdown-row">
+                        <div class="droptext">#1</div>
+
+                        <div>
+                            <div class="dropdown-label">Size</div>
+                            <select>
+                                <option>S</option>
+                                <option>M</option>
+                                <option>L</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="dropdown-label">Color</div>
+                            <select>
+                                <option>Black</option>
+                                <option>Blue</option>
+                                <option>Green</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="dropdown-row">
+                        <div class="droptext2">#2</div>
+
+                        <div>
+                            <select>
+                                <option>S</option>
+                                <option>M</option>
+                                <option>L</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select>
+                                <option disabled selected>Color</option>
+                                <option>Black</option>
+                                <option>Blue</option>
+                                <option>Green</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="">
+                <div class="cart-header ">
+                    <span>Free Delivery</span><span class="total ">Total : $18.00 USD
+                    </span>
+
+                </div>
+                <button class="add-to-cart-btn">+ Add to Cart</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const boxes = document.querySelectorAll('.box');
+            const radios = document.querySelectorAll('.radio-input');
+
+            boxes.forEach((box, index) => {
+                box.addEventListener('mouseover', function () {
+                    toggleBox(box, index);
+                });
+
+                radios[index].addEventListener('change', function () {
+                    toggleBox(box, index);
+                });
+            });
+
+            function toggleBox(box, index) {
+                boxes.forEach((b, i) => {
+                    if (b !== box) {
+                        b.classList.remove('expanded', 'highlighted');
+                        radios[i].checked = false;
+                        b.querySelector('.discount-text').style.display = 'block';
+                    }
+                });
+
+                box.classList.add('expanded', 'highlighted');
+                radios[index].checked = true;
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
